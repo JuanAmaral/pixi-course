@@ -1,49 +1,41 @@
-import { AnimatedSprite, Container, Texture } from "pixi.js";
+import { Container, InteractionEvent, Sprite } from "pixi.js";
 
 export class Scene extends Container {
-
-    constructor() {
-        console.log("chamando animação");
+    private clampy: Sprite;
+    constructor(screenWidth: number, screenHeight: number) {
         super();
-        // This is an array of strings, we need an array of Texture
-        // const clampyFrames: Array<String> = [
-        //   "clampy_sequence_01.png",
-        //   "clampy_sequence_02.png",
-        //   "clampy_sequence_03.png",
-        //   "clampy_sequence_04.png"
-        // ];
-        let camp_images = 
-        [
-            "http://localhost:1234/1.png",
-            "http://localhost:1234/2.png",
-            "http://localhost:1234/3.png"
-        ];
-        let textureArray = [];
-        // `array.map()` creates an array from another array by doing something to each element.
-        // `(stringy) => Texture.from(stringy)` means
-        // "A function that takes a string and returns a Texture.from(that String)"
-        //const animatedClampy: AnimatedSprite = new AnimatedSprite(clampyFrames.map((stringy) => Texture.from(stringy)));
-        for (let i=0; i < 3; i++)
-        {
-            let texture = Texture.from(camp_images[i]);
-            textureArray.push(texture);
-            console.log("carreguei: " +  i);
-        };
-        console.log(camp_images)
-        console.log(textureArray)
-        // (if this javascript is too much, you can do a simple for loop and create a new array with Texture.from())
-        const animatedClampy: AnimatedSprite = new AnimatedSprite(camp_images.map((stringy) => Texture.from(stringy)));
-        // (if this javascript is too much, you can do a simple for loop and create a new array with Texture.from())
 
-        this.addChild(animatedClampy); // we just add it to the scene
-        // Now... what did we learn about assigning functions...
-        animatedClampy.onFrameChange = this.onClampyFrameChange.bind(this);
-        animatedClampy.animationSpeed = 1/30; 
-        animatedClampy.play();
+        this.clampy = Sprite.from("clampy.png");
+
+        this.clampy.anchor.set(0.5);
+        this.clampy.x = screenWidth / 2;
+        this.clampy.y = screenHeight / 2;
+        this.addChild(this.clampy);
+
+        // events that begin with "pointer" are touch + mouse
+        this.clampy.on("pointertap", this.onClicky, this);
+
+        // This only works with a mouse
+        // this.clampy.on("click", this.onClicky, this);
+
+        // This only work with touch
+        // this.clampy.on("tap", this.onClicky, this);
+
+        // Super important or the object will never receive mouse events!
+        this.clampy.interactive = true;
     }
 
-    private onClampyFrameChange(currentFrame : any): void {
-        console.log("Clampy's current frame is", currentFrame);
+    private onClicky(e: InteractionEvent): void {
+        this.clampy.scale.x *= 1.25;
+        this.clampy.scale.y *= 1.25;
+        console.log("You interacted with Clampy!")
+        console.log("The data of your interaction is super interesting", e)
+
+        // Global position of the interaction
+        // e.data.global
+
+        // Local (inside clampy) position of the interaction
+        // e.data.getLocalPosition(this.clampy) 
+        // Remember Clampy has the 0,0 in its center because we set the anchor to 0.5!
     }
-  
 }

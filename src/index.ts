@@ -10,7 +10,7 @@ const app = new Application({
     height: 480
 });
 // pass in the screen size to avoid "asking up"
-const sceny: Scene = new Scene();
+const sceny: Scene = new Scene(app.screen.width, app.screen.height);
 app.stage.addChild(sceny)
 
 // const conty: Container = new Container();
